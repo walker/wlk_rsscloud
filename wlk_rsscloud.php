@@ -118,9 +118,6 @@ class WlkRssCloudClass {
 		}
 		
 		if(isset($prefs['wlk_rsscloud_notifications_instant']) && !empty($prefs['wlk_rsscloud_notifications_instant'])) { $this->vars['notifications_instant'] = (bool)$prefs['wlk_rsscloud_notifications_instant']; }
-		if(isset($prefs['wlk_rsscloud_max_failures']) && !empty($prefs['wlk_rsscloud_max_failures'])) { $this->vars['max_failures'] = (int)$prefs['wlk_rsscloud_max_failures']; }
-		if(isset($prefs['wlk_rsscloud_timeout']) && !empty($prefs['wlk_rsscloud_timeout'])) { $this->vars['timeout'] = (int)$prefs['wlk_rsscloud_timeout']; }
-		if(isset($prefs['wlk_rsscloud_user_agent']) && !empty($prefs['wlk_rsscloud_user_agent'])) { $this->vars['user_agent'] = $prefs['wlk_rsscloud_user_agent']; }
 		if(isset($prefs['wlk_rsscloud_custom_url']) && !empty($prefs['wlk_rsscloud_custom_url'])) { $this->vars['custom_url'] = $prefs['wlk_rsscloud_custom_url']; }
 	}
 	
@@ -199,14 +196,28 @@ class WlkRssCloudClass {
 	
 	function head() {
 		$cloud = parse_url(hu.'?rsscloud=notify');
-		$cloud['port'] = (int) $cloud['port'];
 		
-		if(empty( $cloud['port'])) { $cloud['port'] = 80; }
+		if(isset($cloud['port']) && !empty($cloud['port'])) {
+			$port = (int)$cloud['port'];
+		} else {
+			$port = 80;
+		}
 		
-		$cloud['path'] .= "?{$cloud['query']}";
-		$cloud['host'] = strtolower( $cloud['host'] );
+		if(isset($cloud['path']) && isset($cloud['query'])) {
+			$path = $cloud['path']."?".$cloud['query'];
+		} else if(isset($cloud['query'])) {
+			$path = "/?".$cloud['query'];
+		} else {
+			$path = '';
+		}
 		
-		return "<cloud domain='{$cloud['host']}' port='{$cloud['port']}' path='{$cloud['path']}' registerProcedure='' protocol='http-post' />"."\n";
+		if(isset($cloud['host'])) {
+			$host = strtolower($cloud['host']);
+		} else {
+			$host = $_SERVER['HTTP_HOST'];
+		}
+		
+		return "<cloud domain='".$host."' port='".$port."' path='".$path."' registerProcedure='' protocol='http-post' />"."\n";
 	}
 	
 	function notify_result($success, $msg) {
@@ -315,8 +326,11 @@ class WlkRssCloudClass {
 						if ($n['protocol'] == 'http-post')
 						{
 							$url = parse_url($n['notify_url']);
-							$port = 80;
-							if(!empty($url['port'])) { $port = $url['port']; }
+							if(isset($url['port']) && !empty($url['port'])) {
+								$port = $url['port'];
+							} else {
+								$port = 80;
+							}
 							
 							$result = $this->remote_post($n['notify_url'], array('method' => 'POST', 'port' => $port, 'body' => array('url' => $n['feed_url'])));
 							
