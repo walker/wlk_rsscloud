@@ -1,5 +1,5 @@
 <?php
-$plugin['version'] = '0.2';
+$plugin['version'] = '0.2.1';
 $plugin['author'] = 'Walker Hamilton';
 $plugin['author_uri'] = 'http://walkerhamilton.com';
 $plugin['description'] = 'A down and dirty RSSCloud plugin.';
@@ -18,7 +18,7 @@ if(0) {
 
 h2. About
 
-p. This is down and dirty RSSCloud plugin.
+p. This is down and dirty RSSCloud plugin. It requires CURL.
 
 h2. Installation and Use
 

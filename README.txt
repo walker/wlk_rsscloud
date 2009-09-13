@@ -4,4 +4,4 @@ To install, grab the current version of the compressed plugin (wlk_rsscloud.txt)
 
 As long as it's been installed & activated, you're ready to go.
 
-This has been tested with 4.2.0 only.
+This has been tested with 4.2.0 only. It requires CURL.
